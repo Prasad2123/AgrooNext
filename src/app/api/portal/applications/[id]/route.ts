@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '../../../../../lib/prisma';
-import { requireAuth } from '../../../../../lib/auth';
-import { transitionApplication } from '../../../../../lib/fsm';
+import prisma from '@/lib/prisma';
+import { requireAuth } from '@/lib/auth';
+import { transitionApplication } from '@/lib/fsm';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(
   req: NextRequest,
