@@ -80,7 +80,7 @@ export default function LoginPage() {
 
           {/* Logo & Lockup */}
           <div className="flex flex-col items-center text-center mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-white p-1.5 shadow-md border border-slate-200 dark:border-white/10 flex items-center justify-center mb-3">
+            <div className="relative w-16 h-16 rounded-2xl overflow-hidden bg-white p-1.5 shadow-md border border-slate-200/90 dark:border-white/10 flex items-center justify-center mb-3">
               <Image
                 src="/logo.png"
                 alt="AgrooNext Official Logo"

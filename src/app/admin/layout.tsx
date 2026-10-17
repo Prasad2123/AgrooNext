@@ -99,17 +99,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="space-y-6">
           {/* Logo & Lockup */}
           <div className="flex items-center gap-3 px-2 py-1">
-            <div className="w-9 h-9 rounded-xl bg-white p-0.5 shadow-sm border border-slate-200 dark:border-white/10 flex items-center justify-center shrink-0">
+            <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden bg-white p-1 shadow-sm border border-slate-200/90 dark:border-white/10 flex items-center justify-center shrink-0">
               <Image
                 src="/logo.png"
                 alt="AgrooNext Official Logo"
-                width={32}
-                height={32}
+                width={44}
+                height={44}
                 className="w-full h-full object-contain"
+                priority
               />
             </div>
-            <div>
-              <span className="font-extrabold font-display text-base tracking-tight text-slate-900 dark:text-white block leading-none">
+            <div className="flex flex-col min-w-0">
+              <span className="font-extrabold font-display text-base tracking-tight text-slate-900 dark:text-white leading-tight">
                 AgrooNext
               </span>
               <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 tracking-wider uppercase">
@@ -169,7 +170,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Mobile Topbar */}
-        <header className="lg:hidden bg-white dark:bg-[#0D1B2A] border-b border-slate-200 dark:border-white/10 px-4 py-3 flex items-center justify-between">
+        <header className="lg:hidden bg-white dark:bg-[#0D1B2A] border-b border-transparent shadow-sm dark:shadow-[0_4px_20px_rgba(0,0,0,0.35)] px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -177,9 +178,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             >
               {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
-            <span className="font-extrabold font-display text-base text-slate-900 dark:text-white">
-              AgrooNext Admin
-            </span>
+            <div className="flex items-center gap-2">
+              <div className="relative w-8 h-8 rounded-lg overflow-hidden bg-white p-0.5 shadow-sm border border-slate-200/90 dark:border-white/10 flex items-center justify-center shrink-0">
+                <Image
+                  src="/logo.png"
+                  alt="AgrooNext Official Logo"
+                  width={32}
+                  height={32}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <span className="font-extrabold font-display text-base text-slate-900 dark:text-white">
+                AgrooNext Admin
+              </span>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />

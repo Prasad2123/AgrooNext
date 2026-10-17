@@ -114,18 +114,19 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#070D1E] text-slate-900 dark:text-slate-100 flex flex-col transition-colors duration-300">
       {/* Top Navbar */}
-      <header className="sticky top-0 z-30 bg-white/90 dark:bg-[#0D1B2A]/90 backdrop-blur-md border-b border-slate-200 dark:border-white/10 px-4 sm:px-6 lg:px-8 py-3">
+      <header className="sticky top-0 z-30 bg-white/95 dark:bg-[#0D1B2A]/95 backdrop-blur-md border-b border-transparent shadow-[0_4px_20px_-4px_rgba(0,0,0,0.12)] dark:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.6)] px-4 sm:px-6 lg:px-8 py-3">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo & Portal Badge */}
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-white p-0.5 shadow-sm border border-slate-200 dark:border-white/10 flex items-center justify-center shrink-0">
+              <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden bg-white p-1 shadow-sm border border-slate-200/90 dark:border-white/10 flex items-center justify-center shrink-0">
                 <Image
                   src="/logo.png"
                   alt="AgrooNext Official Logo"
-                  width={32}
-                  height={32}
+                  width={44}
+                  height={44}
                   className="w-full h-full object-contain"
+                  priority
                 />
               </div>
               <span className="font-extrabold font-display text-lg tracking-tight text-slate-900 dark:text-white hidden sm:inline">

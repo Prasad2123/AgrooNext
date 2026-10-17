@@ -95,7 +95,7 @@ export default function RegisterPage() {
       <main className="flex-1 flex items-center justify-center px-4 py-8 sm:py-12">
         <div className="max-w-xl w-full bg-white dark:bg-[#0D1B2A] border border-slate-200 dark:border-white/10 rounded-3xl p-6 sm:p-10 shadow-xl relative overflow-hidden">
           <div className="flex flex-col items-center text-center mb-6">
-            <div className="w-16 h-16 rounded-2xl bg-white p-1.5 shadow-md border border-slate-200 dark:border-white/10 flex items-center justify-center mb-3">
+            <div className="relative w-16 h-16 rounded-2xl overflow-hidden bg-white p-1.5 shadow-md border border-slate-200/90 dark:border-white/10 flex items-center justify-center mb-3">
               <Image
                 src="/logo.png"
                 alt="AgrooNext Official Logo"

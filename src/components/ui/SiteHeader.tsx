@@ -32,9 +32,9 @@ export const SiteHeader: React.FC = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 border-b border-transparent ${
         isScrolled
-          ? 'bg-white/90 dark:bg-[#070D1E]/90 backdrop-blur-md border-b border-slate-200 dark:border-white/10 shadow-md py-3'
+          ? 'bg-white/95 dark:bg-[#070D1E]/95 backdrop-blur-md shadow-[0_4px_20px_-4px_rgba(0,0,0,0.12)] dark:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.6)] py-3'
           : 'bg-gradient-to-b from-white/95 dark:from-[#070D1E]/95 to-transparent py-4 sm:py-5'
       }`}
     >
@@ -46,7 +46,7 @@ export const SiteHeader: React.FC = () => {
             className="flex items-center gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00897B] rounded-xl p-1"
             aria-label="AgrooNext — Agro-Tech & Training Homepage"
           >
-            <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-xl overflow-hidden border border-slate-200/90 dark:border-[#00897B]/40 group-hover:border-[#00897B] transition-colors shadow-sm bg-white p-0.5 shrink-0 flex items-center justify-center">
+            <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-xl overflow-hidden border border-slate-200/90 dark:border-[#00897B]/40 group-hover:border-[#00897B] transition-colors shadow-sm bg-white p-1 shrink-0 flex items-center justify-center">
               <Image
                 src="/logo.png"
                 alt="AgrooNext Official Logo"
