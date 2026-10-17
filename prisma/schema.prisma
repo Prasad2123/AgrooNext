@@ -1,0 +1,410 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// 1. USERS & IDENTITY [ARCH-AUTH-001]
+model User {
+  id              String           @id @default(uuid())
+  email           String?          @unique
+  phone           String?          @unique
+  passwordHash    String
+  role            String           @default("STUDENT_LEARNER") // PUBLIC_VISITOR, STUDENT_LEARNER, STAFF_TRAINER, SYSTEM_ADMIN
+  isActive        Boolean          @default(true)
+  emailVerifiedAt DateTime?
+  phoneVerifiedAt DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  profile         StudentProfile?
+  applications    Application[]
+  enrollments     Enrollment[]
+  documents       Document[]
+  notifications   Notification[]
+  auditLogs       AuditLog[]
+  assignedInquiries Inquiry[]      @relation("AssignedInquiries")
+  reconciledPayments Payment[]     @relation("ReconciledPayments")
+  appAudits       ApplicationAuditTrail[]
+  recordedAttendance AttendanceRecord[]
+  evaluatedAssessments AssessmentRecord[]
+  issuedCertificates Certificate[]
+
+  @@map("users")
+}
+
+// 2. STUDENT PROFILES [ARCH-DB-002] (DPDP Act Data Minimization)
+model StudentProfile {
+  id                 String    @id @default(uuid())
+  userId             String    @unique
+  fullName           String
+  gender             String?
+  dateOfBirth        DateTime?
+  educationLevel     String?
+  institutionName    String?
+  guardianName       String?
+  guardianContact    String?
+  city               String    @default("Pune")
+  state              String    @default("Maharashtra")
+  idProofType        String?
+  idProofStorageKey  String?   // Secure private object key (never public URL)
+  idProofStatus      String    @default("NOT_SUBMITTED") // NOT_SUBMITTED, PENDING_VERIFICATION, VERIFIED, REJECTED
+  idProofVerifiedAt  DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("student_profiles")
+}
+
+// 3. PROGRAMMES (5 Core Disciplines) [ARCH-CAT-001]
+model Programme {
+  id               String            @id @default(uuid())
+  code             String            @unique // HYDROPONICS, AEROPONICS, MUSHROOM, AQUACULTURE, WOMEN_AGRI
+  title            String
+  slug             String            @unique
+  shortDescription String
+  fullDescription  String
+  iconName         String
+  displayOrder     Int               @default(0)
+  isActive         Boolean           @default(true)
+  createdAt        DateTime          @default(now())
+
+  courses          Course[]
+  courseProgrammes CourseProgramme[]
+
+  @@map("programmes")
+}
+
+// 4. COURSES & OFFERING TYPES [ARCH-CAT-002]
+model Course {
+  id               String            @id @default(uuid())
+  programmeId      String?
+  courseCode       String            @unique
+  title            String
+  slug             String            @unique
+  summary          String
+  offeringType     String            // CRASH_COURSE, TOPIC_CERTIFICATE, COMPLETE_PACKAGE, INSTITUTIONAL_WORKSHOP
+  deliveryLevel    String            // LEVEL_1_FOUNDATION, LEVEL_2_SKILL_CERTIFICATE, LEVEL_3_ENTERPRISE_PACKAGE, INSTITUTIONAL_WORKSHOP
+  standardDuration String
+  prerequisites    String?
+  isPublished      Boolean           @default(true)
+  createdAt        DateTime          @default(now())
+
+  programme        Programme?        @relation(fields: [programmeId], references: [id], onDelete: Restrict)
+  courseProgrammes CourseProgramme[]
+  syllabusTopics   SyllabusTopic[]
+  pricingTiers     PricingTier[]
+  batches          Batch[]
+
+  @@map("courses")
+}
+
+// 4b. COURSE TO PROGRAMMES JUNCTION [ARCH-CAT-003]
+model CourseProgramme {
+  courseId    String
+  programmeId String
+
+  course      Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  programme   Programme @relation(fields: [programmeId], references: [id], onDelete: Restrict)
+
+  @@id([courseId, programmeId])
+  @@map("course_programmes")
+}
+
+// 5. SYLLABUS TOPICS [ARCH-CAT-002]
+model SyllabusTopic {
+  id                String   @id @default(uuid())
+  courseId          String
+  topicOrder        Int
+  title             String
+  description       String?
+  practicalActivity String?
+  createdAt         DateTime @default(now())
+
+  course            Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@map("syllabus_topics")
+}
+
+// 6. PRICING TIERS [ARCH-DB-006] [ARCH-FEE-001]
+model PricingTier {
+  id              String        @id @default(uuid())
+  courseId        String
+  targetGroup     String        // School Students, College Students, Individuals/SHG, Institutions
+  pricingModel    String        @default("PER_STUDENT") // PER_STUDENT, PER_INSTITUTION_SESSION
+  baseFeeInr      Float
+  taxTreatment    String        @default("INCLUSIVE_OR_EXEMPT_PENDING_TAX_ADVICE")
+  taxRatePercent  Float?
+  eligibilityNotes String?
+  isActive        Boolean       @default(true)
+  effectiveFrom   DateTime      @default(now())
+
+  course          Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  applications    Application[]
+
+  @@map("pricing_tiers")
+}
+
+// 7. BATCHES & SCHEDULING [ARCH-DB-007]
+model Batch {
+  id               String        @id @default(uuid())
+  courseId         String
+  batchCode        String        @unique
+  startDate        DateTime
+  endDate          DateTime
+  venueType        String        @default("TRAINING_CENTER") // TRAINING_CENTER, ON_SITE_INSTITUTION, HYBRID_LAB
+  venueAddress     String        @default("Pune Training Facility (Address to be confirmed upon registration)")
+  minimumCapacity  Int           @default(5)
+  maximumCapacity  Int           @default(30)
+  batchStatus      String        @default("SCHEDULED") // SCHEDULED, ENROLLING, IN_PROGRESS, COMPLETED, CANCELLED
+  primaryTrainerId String?
+  createdAt        DateTime      @default(now())
+
+  course           Course        @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  applications     Application[]
+  enrollments      Enrollment[]
+
+  @@map("batches")
+}
+
+// 8. APPLICATIONS (12 States Lifecycle) [ARCH-FSM-001]
+model Application {
+  id                 String                  @id @default(uuid())
+  applicationNumber  String                  @unique
+  userId             String
+  batchId            String
+  pricingTierId      String
+  currentStatus      String                  @default("DRAFT") // 12-state FSM
+  calculatedFeeInr   Float
+  seatHoldExpiresAt  DateTime?
+  submittedAt        DateTime?
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+
+  user               User                    @relation(fields: [userId], references: [id], onDelete: Restrict)
+  batch              Batch                   @relation(fields: [batchId], references: [id], onDelete: Restrict)
+  pricingTier        PricingTier             @relation(fields: [pricingTierId], references: [id], onDelete: Restrict)
+  auditTrail         ApplicationAuditTrail[]
+  enrollment         Enrollment?
+  payments           Payment[]
+
+  @@map("applications")
+}
+
+// 9. APPLICATION AUDIT TRAIL [ARCH-DB-009]
+model ApplicationAuditTrail {
+  id              String      @id @default(uuid())
+  applicationId   String
+  previousStatus  String?
+  newStatus       String
+  changedByUserId String?
+  comments        String?
+  createdAt       DateTime    @default(now())
+
+  application     Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  changedByUser   User?       @relation(fields: [changedByUserId], references: [id], onDelete: SetNull)
+
+  @@map("application_audit_trail")
+}
+
+// 10. ENROLLMENTS
+model Enrollment {
+  id               String             @id @default(uuid())
+  enrollmentNumber String             @unique
+  applicationId    String             @unique
+  userId           String
+  batchId          String
+  enrollmentStatus String             @default("ACTIVE") // ACTIVE, SUSPENDED, COMPLETED, CANCELLED
+  enrolledAt       DateTime           @default(now())
+
+  application      Application        @relation(fields: [applicationId], references: [id], onDelete: Restrict)
+  batch            Batch              @relation(fields: [batchId], references: [id], onDelete: Restrict)
+  user             User               @relation(fields: [userId], references: [id], onDelete: Restrict)
+  attendance       AttendanceRecord[]
+  assessment       AssessmentRecord?
+  certificate      Certificate?
+
+  @@map("enrollments")
+}
+
+// 11. PAYMENTS [ARCH-DB-011] [ARCH-PAY-001]
+model Payment {
+  id                   String      @id @default(uuid())
+  receiptNumber        String      @unique
+  applicationId        String
+  amountInr            Float
+  paymentMethod        String      // ONLINE_GATEWAY, OFFLINE_NEFT_RTGS, OFFLINE_UPI_QR, OFFLINE_CASH
+  paymentStatus        String      @default("PENDING") // PENDING, CONFIRMED, FAILED, REFUNDED
+  transactionReference String?     // Gateway ID or Bank UTR number
+  reconciledByUserId   String?
+  reconciledAt         DateTime?
+  createdAt            DateTime    @default(now())
+
+  application          Application @relation(fields: [applicationId], references: [id], onDelete: Restrict)
+  reconciledByUser     User?       @relation("ReconciledPayments", fields: [reconciledByUserId], references: [id], onDelete: SetNull)
+
+  @@map("payments")
+}
+
+// 12. TRAINING OPERATIONS: ATTENDANCE [ARCH-DB-012]
+model AttendanceRecord {
+  id               String     @id @default(uuid())
+  enrollmentId     String
+  sessionDate      DateTime
+  isPresent        Boolean    @default(true)
+  recordedByUserId String
+  notes            String?
+  createdAt        DateTime   @default(now())
+
+  enrollment       Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  recordedByUser   User       @relation(fields: [recordedByUserId], references: [id], onDelete: Restrict)
+
+  @@unique([enrollmentId, sessionDate])
+  @@map("attendance_records")
+}
+
+// 13. TRAINING OPERATIONS: ASSESSMENTS [ARCH-DB-013]
+model AssessmentRecord {
+  id                            String     @id @default(uuid())
+  enrollmentId                  String     @unique
+  knowledgeCheckSatisfactory     Boolean    @default(false)
+  practicalSkillsSatisfactory   Boolean    @default(false)
+  miniProjectSatisfactory       Boolean    @default(false)
+  attendanceCriteriaMet         Boolean    @default(false)
+  overallOutcome                String     @default("PENDING") // PENDING, SATISFACTORY, EXEMPLARY, NEEDS_REASSESSMENT
+  evaluatorUserId               String
+  evaluatedAt                   DateTime   @default(now())
+
+  enrollment                    Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  evaluatorUser                 User       @relation(fields: [evaluatorUserId], references: [id], onDelete: Restrict)
+
+  @@map("assessment_records")
+}
+
+// 14. CERTIFICATES & VERIFICATION [ARCH-DB-014]
+model Certificate {
+  id                     String     @id @default(uuid())
+  certificateNumber      String     @unique
+  enrollmentId           String     @unique
+  verificationUuid       String     @unique @default(uuid())
+  recipientName          String
+  courseTitle            String
+  courseDuration         String
+  trainingProvider       String     @default("AgrooNext — Agro-Tech & Training")
+  assessmentBasis        String
+  cryptographicHash      String
+  certificateStorageKey  String
+  issuedByUserId         String
+  issuedAt               DateTime   @default(now())
+
+  enrollment             Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Restrict)
+  issuedByUser           User       @relation(fields: [issuedByUserId], references: [id], onDelete: Restrict)
+
+  @@map("certificates")
+}
+
+// 15. AUDIT LOGS [ARCH-ADM-003]
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  action     String   // e.g. COURSE_CREATED, PRICING_UPDATED, PAYMENT_RECONCILED, STATUS_CHANGED
+  entityName String   // e.g. applications, payments, pricing_tiers
+  entityId   String?
+  oldState   String?  // JSON string
+  newState   String?  // JSON string
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("audit_logs")
+}
+
+// 16. INQUIRIES [ARCH-PUB-003] [ARCH-DB-015]
+model Inquiry {
+  id                String    @id @default(uuid())
+  inquiryType       String    // GENERAL_INQUIRY, INSTITUTIONAL_WORKSHOP, COURSE_ADMISSION
+  fullName          String
+  email             String
+  phone             String?
+  institutionName   String?
+  targetGroup       String?
+  estimatedStudents Int?
+  programme         String?
+  message           String
+  status            String    @default("NEW") // NEW, IN_REVIEW, CONTACTED, RESOLVED, CLOSED
+  assignedToUserId  String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  assignedToUser    User?     @relation("AssignedInquiries", fields: [assignedToUserId], references: [id], onDelete: SetNull)
+
+  @@map("inquiries")
+}
+
+// 17. FAQS KNOWLEDGEBASE [ARCH-DB-015]
+model Faq {
+  id           String   @id @default(uuid())
+  category     String
+  question     String
+  answer       String
+  displayOrder Int      @default(0)
+  isPublished  Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("faqs")
+}
+
+// 18. DOCUMENTS & FILES [ARCH-DB-017]
+model Document {
+  id            String    @id @default(uuid())
+  userId        String
+  documentType  String    // STUDENT_ID_PROOF, PAYMENT_RECEIPT, CERTIFICATE_PDF, INSTITUTION_MOU
+  storageKey    String
+  fileName      String
+  fileSizeBytes Int
+  mimeType      String
+  isVerified    Boolean   @default(false)
+  verifiedByUserId String?
+  createdAt     DateTime  @default(now())
+
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("documents")
+}
+
+// 19. NOTIFICATIONS [ARCH-NOT-001]
+model Notification {
+  id               String    @id @default(uuid())
+  userId           String
+  title            String
+  message          String
+  notificationType String    // ADMISSION_UPDATE, PAYMENT_RECEIPT, BATCH_REMINDER, SYSTEM_ALERT
+  linkUrl          String?
+  isRead           Boolean   @default(false)
+  readAt           DateTime?
+  createdAt        DateTime  @default(now())
+
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+// 20. SYSTEM SETTINGS [ARCH-ADM-004]
+model SystemSetting {
+  id           String   @id @default(uuid())
+  settingKey   String   @unique
+  settingValue String   // JSON string
+  updatedAt    DateTime @updatedAt
+
+  @@map("system_settings")
+}
