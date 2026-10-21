@@ -3,7 +3,7 @@ import React from 'react';
 interface SectionHeadingProps {
   badge?: string;
   badgeColor?: 'teal' | 'rose' | 'amber' | 'emerald';
-  title: string;
+  title: string | React.ReactNode;
   subtitle?: string;
   centered?: boolean;
   className?: string;

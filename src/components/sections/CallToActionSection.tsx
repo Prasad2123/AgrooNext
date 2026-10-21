@@ -24,7 +24,10 @@ export const CallToActionSection: React.FC = () => {
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white font-display tracking-tight leading-tight">
-            Ready to Connect Modern Science with Sustainable Livelihoods?
+            Ready to Connect Modern Science with{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1B5E20] via-[#00897B] to-[#00ACC1]">
+              Sustainable Livelihoods?
+            </span>
           </h2>
 
           <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl mx-auto">
@@ -33,7 +36,7 @@ export const CallToActionSection: React.FC = () => {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
             <PrimaryButton
-              href="#programmes"
+              href="/programmes"
               className="w-full sm:w-auto px-8 py-4 text-base"
               icon={<ArrowRight className="w-5 h-5" />}
             >

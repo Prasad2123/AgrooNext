@@ -164,3 +164,22 @@ html.dark .hero-image-frame {
   object-position: center;
 }
 
+/* Hero Logo Watermark — NF Venture Studio / Naree Foundation Brand Watermark */
+.hero-watermark {
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+.hero-watermark-img {
+  mix-blend-mode: multiply;
+  opacity: 0.06;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+html.dark .hero-watermark-img {
+  mix-blend-mode: screen;
+  filter: invert(1) sepia(0.8) saturate(2.5) hue-rotate(5deg);
+  opacity: 0.08;
+}
+

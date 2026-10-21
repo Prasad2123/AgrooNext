@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
-import { Sprout, Shield, ArrowUp, Compass } from 'lucide-react';
+import Link from 'next/link';
+import { Sprout, Shield, ArrowUp, Compass, BookOpen, HelpCircle, Phone } from 'lucide-react';
 
 export const SiteFooter: React.FC = () => {
   return (
@@ -12,7 +13,7 @@ export const SiteFooter: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 mb-16">
           {/* Brand Column */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center gap-3.5">
+            <Link href="/" className="inline-flex items-center gap-3.5 group">
               <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-[#00897B]/40 shadow-sm bg-white p-0.5 flex items-center justify-center shrink-0">
                 <Image
                   src="/logo.png"
@@ -23,14 +24,14 @@ export const SiteFooter: React.FC = () => {
                 />
               </div>
               <div className="flex flex-col">
-                <span className="font-display font-bold text-2xl tracking-tight text-slate-900 dark:text-white leading-tight">
+                <span className="font-display font-bold text-2xl tracking-tight text-slate-900 dark:text-white leading-tight group-hover:text-[#00897B] transition-colors">
                   AgrooNext
                 </span>
                 <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.16em] uppercase text-[#00897B]">
                   AGRO-TECH & TRAINING
                 </span>
               </div>
-            </div>
+            </Link>
 
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-sm">
               Empowering learners, rural youth, women self-help groups, and aspiring agri-entrepreneurs through hands-on practical training in soilless cultivation, aeroponics, mushroom farming, and aquaculture.
@@ -54,19 +55,44 @@ export const SiteFooter: React.FC = () => {
             </h3>
             <ul className="space-y-2.5 text-sm">
               <li>
-                <a href="#hero" className="hover:text-[#00897B] dark:hover:text-white transition-colors">Overview</a>
+                <Link href="/" className="hover:text-[#00897B] dark:hover:text-white transition-colors">
+                  Overview
+                </Link>
               </li>
               <li>
-                <a href="#about" className="hover:text-[#00897B] dark:hover:text-white transition-colors">About AgrooNext</a>
+                <Link href="/about" className="hover:text-[#00897B] dark:hover:text-white transition-colors">
+                  About AgrooNext
+                </Link>
               </li>
               <li>
-                <a href="#programmes" className="hover:text-[#00897B] dark:hover:text-white transition-colors">Five Core Disciplines</a>
+                <Link href="/programmes" className="hover:text-[#00897B] dark:hover:text-white transition-colors">
+                  Programmes Overview
+                </Link>
               </li>
               <li>
-                <a href="#approach" className="hover:text-[#00897B] dark:hover:text-white transition-colors">Pedagogy & Labs</a>
+                <Link href="/learning-approach" className="hover:text-[#00897B] dark:hover:text-white transition-colors">
+                  Learning Approach
+                </Link>
               </li>
               <li>
-                <a href="#contact" className="hover:text-[#00897B] dark:hover:text-white transition-colors">Enquire / Contact</a>
+                <Link href="/courses" className="hover:text-[#00897B] dark:hover:text-white transition-colors">
+                  Course Catalogue
+                </Link>
+              </li>
+              <li>
+                <Link href="/training-formats" className="hover:text-[#00897B] dark:hover:text-white transition-colors">
+                  Training Formats & Fees
+                </Link>
+              </li>
+              <li>
+                <Link href="/faq" className="hover:text-[#00897B] dark:hover:text-white transition-colors">
+                  Frequently Asked Questions
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-[#00897B] dark:hover:text-white transition-colors">
+                  Contact & Admissions
+                </Link>
               </li>
             </ul>
           </div>
@@ -75,23 +101,48 @@ export const SiteFooter: React.FC = () => {
           <div className="space-y-4">
             <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
               <Sprout className="w-4 h-4 text-[#2E7D32]" />
-              Core Programmes
+              Core Disciplines
             </h3>
             <ul className="space-y-2.5 text-sm">
               <li>
-                <a href="#programmes" className="hover:text-[#00897B] dark:hover:text-white transition-colors">Hydroponics</a>
+                <Link
+                  href="/programmes/hydroponics"
+                  className="hover:text-[#00897B] dark:hover:text-white transition-colors"
+                >
+                  Hydroponics
+                </Link>
               </li>
               <li>
-                <a href="#programmes" className="hover:text-[#00897B] dark:hover:text-white transition-colors">Aeroponics</a>
+                <Link
+                  href="/programmes/aeroponics"
+                  className="hover:text-[#00897B] dark:hover:text-white transition-colors"
+                >
+                  Aeroponics
+                </Link>
               </li>
               <li>
-                <a href="#programmes" className="hover:text-[#00897B] dark:hover:text-white transition-colors">Mushroom Farming</a>
+                <Link
+                  href="/programmes/mushroom-farming"
+                  className="hover:text-[#00897B] dark:hover:text-white transition-colors"
+                >
+                  Mushroom Farming
+                </Link>
               </li>
               <li>
-                <a href="#programmes" className="hover:text-[#00897B] dark:hover:text-white transition-colors">Aquaculture</a>
+                <Link
+                  href="/programmes/aquaculture"
+                  className="hover:text-[#00897B] dark:hover:text-white transition-colors"
+                >
+                  Aquaculture & Biofloc
+                </Link>
               </li>
               <li>
-                <a href="#programmes" className="hover:text-[#00897B] dark:hover:text-white transition-colors">Women in Agri-Enterprise</a>
+                <Link
+                  href="/programmes/women-empowerment"
+                  className="hover:text-[#00897B] dark:hover:text-white transition-colors"
+                >
+                  Women in Agri-Enterprise
+                </Link>
               </li>
             </ul>
           </div>
@@ -106,13 +157,12 @@ export const SiteFooter: React.FC = () => {
               Committed to scientific training integrity and authentic practical exposure. No curative medical claims or unapproved statutory degree claims are made.
             </p>
             <div className="pt-2">
-              <a
-                href="#hero"
+              <Link
+                href="/login"
                 className="inline-flex items-center gap-1.5 text-xs text-[#00897B] hover:text-[#00796B] dark:hover:text-white transition-colors font-semibold"
               >
-                <span>Back to Top</span>
-                <ArrowUp className="w-3.5 h-3.5" />
-              </a>
+                <span>Learner Portal Login →</span>
+              </Link>
             </div>
           </div>
         </div>
@@ -124,7 +174,7 @@ export const SiteFooter: React.FC = () => {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 text-slate-500 dark:text-slate-500">
             <p>© {new Date().getFullYear()} AgrooNext — Agro-Tech & Training. Supported by Naree Foundation social outreach. All rights reserved.</p>
-            <p className="text-[11px] font-medium text-slate-600 dark:text-slate-400">Agro-Tech & Practical Modern Farming Training</p>
+            <p className="text-[11px] font-medium text-slate-600 dark:text-slate-400">Agro-Tech & Practical Modern Farming Training • Pune, Maharashtra</p>
           </div>
         </div>
       </div>

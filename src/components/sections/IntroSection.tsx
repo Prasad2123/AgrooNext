@@ -1,7 +1,8 @@
 import React from 'react';
+import Link from 'next/link';
 import { SectionContainer } from '../ui/SectionContainer';
 import { SectionHeading } from '../ui/SectionHeading';
-import { Cpu, Users, Award, Leaf, Layers, ArrowUpRight } from 'lucide-react';
+import { Cpu, Users, Award, Leaf, Layers, ArrowRight } from 'lucide-react';
 
 export const IntroSection: React.FC = () => {
   const pillars = [
@@ -32,34 +33,49 @@ export const IntroSection: React.FC = () => {
   ];
 
   return (
-    <SectionContainer id="about" glowEffect="teal">
-      <div className="space-y-16 lg:space-y-24">
+    <SectionContainer id="about-intro" glowEffect="teal">
+      <div className="space-y-12 lg:space-y-16">
         {/* Section Header */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
           <div className="lg:col-span-7">
             <SectionHeading
               badge="About AgrooNext"
               badgeColor="teal"
-              title="Transforming Modern Agriculture into Practical Knowledge & Enterprise"
+              title={
+                <>
+                  Transforming Modern Agriculture into{' '}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1B5E20] via-[#00897B] to-[#00ACC1]">
+                    Practical Knowledge & Enterprise
+                  </span>
+                </>
+              }
               subtitle="AgrooNext is dedicated to empowering students, young adults, community groups, and aspiring women entrepreneurs through structured agro-technology training."
             />
           </div>
-          <div className="lg:col-span-5 bg-white/80 dark:bg-[#0F2C59]/30 border border-slate-200 dark:border-white/10 rounded-2xl p-6 backdrop-blur-md shadow-sm">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#00897B] mb-2">
+          <div className="lg:col-span-5 bg-white/80 dark:bg-[#0F2C59]/30 border border-slate-200 dark:border-white/10 rounded-2xl p-6 backdrop-blur-md shadow-sm space-y-3">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#00897B]">
               <Award className="w-4 h-4" />
               <span>Institutional Purpose & Heritage</span>
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-              In association with the Naree Foundation’s skill development mission, we connect foundational biology and engineering concepts with direct physical practice, instilling enterprise confidence and career awareness without unapproved commercial or medical promises.
+              In association with the Naree Foundation’s skill development mission, we connect foundational biology and engineering concepts with direct physical practice, instilling enterprise confidence and career awareness.
             </p>
+            <Link
+              href="/about"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#00897B] hover:underline pt-1"
+            >
+              <span>Read Full Organization Profile & Creed</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
         </div>
 
         {/* 4 Pillars Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {pillars.map((pillar, idx) => (
-            <div
+            <Link
               key={pillar.title}
+              href="/about"
               className="group relative bg-white dark:bg-[#0F2C59]/20 hover:bg-slate-50 dark:hover:bg-[#0F2C59]/40 border border-slate-200 dark:border-white/10 hover:border-[#00897B]/40 rounded-2xl p-6 flex flex-col justify-between shadow-sm hover:shadow-xl transition-all duration-300"
             >
               <div className="space-y-4">
@@ -81,9 +97,12 @@ export const IntroSection: React.FC = () => {
 
               <div className="pt-6 mt-4 border-t border-slate-100 dark:border-white/5 flex items-center justify-between text-xs font-semibold text-slate-400 group-hover:text-[#00897B] transition-colors">
                 <span>Pillar 0{idx + 1}</span>
-                <ArrowUpRight className="w-4 h-4 text-[#00897B] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                <span className="flex items-center gap-1 text-[#00897B]">
+                  <span>Learn more</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

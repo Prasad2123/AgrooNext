@@ -31,6 +31,8 @@ export const EnquiryModal: React.FC = () => {
   const [errors, setErrors] = useState<Partial<Record<keyof InquiryFormData, string>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [inquiryId, setInquiryId] = useState<string | null>(null);
 
   // Sync selected programme when opened from a specific section
   useEffect(() => {
@@ -55,18 +57,16 @@ export const EnquiryModal: React.FC = () => {
 
       window.addEventListener('keydown', handleKeyDown);
 
-      // Focus first input after modal enters DOM
       const timer = setTimeout(() => {
         firstInputRef.current?.focus();
-      }, 60);
+      }, 50);
 
-      // Prevent background scrolling
       document.body.style.overflow = 'hidden';
 
       return () => {
         window.removeEventListener('keydown', handleKeyDown);
         clearTimeout(timer);
-        document.body.style.overflow = '';
+        document.body.style.overflow = 'unset';
         previouslyFocusedElement.current?.focus();
       };
     }
@@ -76,16 +76,17 @@ export const EnquiryModal: React.FC = () => {
 
   const validate = (): boolean => {
     const newErrors: Partial<Record<keyof InquiryFormData, string>> = {};
+
     if (!formData.fullName.trim()) {
       newErrors.fullName = 'Please enter your full name.';
     }
     if (!formData.email.trim()) {
       newErrors.email = 'Please provide a valid email address.';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
-      newErrors.email = 'Please enter a valid email address format.';
+      newErrors.email = 'Please enter a valid email format (e.g. name@domain.com).';
     }
     if (!formData.phone.trim()) {
-      newErrors.phone = 'Please provide your mobile or WhatsApp number.';
+      newErrors.phone = 'Please provide your mobile or WhatsApp contact number.';
     } else if (!/^[0-9+\s()-]{8,15}$/.test(formData.phone.trim())) {
       newErrors.phone = 'Please enter a valid phone number (8-15 digits).';
     }
@@ -100,17 +101,35 @@ export const EnquiryModal: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setApiError(null);
     if (!validate()) return;
 
     setIsSubmitting(true);
-    // Simulate local validation & preparation delay
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    setIsSubmitting(false);
-    setIsSuccess(true);
+    try {
+      const res = await fetch('/api/inquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to submit enquiry. Please try again.');
+      }
+
+      setInquiryId(data.inquiryId);
+      setIsSuccess(true);
+    } catch (err: any) {
+      setApiError(err.message || 'Failed to submit enquiry. Please check connection.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleReset = () => {
     setIsSuccess(false);
+    setInquiryId(null);
+    setApiError(null);
     setFormData({
       fullName: '',
       email: '',
@@ -138,14 +157,11 @@ export const EnquiryModal: React.FC = () => {
         className="relative w-full max-w-2xl bg-white dark:bg-[#0A1428] border border-slate-200 dark:border-white/10 rounded-3xl shadow-2xl overflow-hidden my-6 transition-all"
       >
         {/* Modal Header */}
-        <div className="relative px-6 py-5 sm:px-8 sm:py-6 border-b border-slate-200 dark:border-white/10 bg-slate-50/90 dark:bg-[#070D1E]/70 flex items-center justify-between">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#00897B]" />
-              <span className="text-[11px] font-bold tracking-wider uppercase text-[#00897B] dark:text-[#4DD0E1]">
-                AgrooNext Admissions & Training
-              </span>
-            </div>
+        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-200 dark:border-white/10 bg-slate-50/80 dark:bg-[#0F2C59]/30">
+          <div className="space-y-0.5">
+            <span className="text-xs font-bold text-[#00897B] dark:text-[#4DD0E1] tracking-wider uppercase">
+              AgrooNext Admissions
+            </span>
             <h2
               id="enquiry-modal-title"
               className="text-xl sm:text-2xl font-bold font-display text-slate-900 dark:text-white"
@@ -173,71 +189,62 @@ export const EnquiryModal: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-400 text-xs font-semibold">
-                  <Info className="w-3.5 h-3.5" />
-                  <span>Development Preview • Local Validation Passed</span>
-                </div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-400 text-xs font-semibold">
+                  Enquiry Registered Successfully
+                </span>
                 <h3 className="text-2xl font-bold font-display text-slate-900 dark:text-white">
-                  Enquiry Form Validated
+                  Thank You, {formData.fullName}!
                 </h3>
                 <p className="text-sm text-slate-600 dark:text-slate-300 max-w-lg mx-auto leading-relaxed">
-                  Thank you, <strong className="text-slate-900 dark:text-white">{formData.fullName}</strong>. Your training enquiry for{' '}
-                  <strong className="text-[#00897B] dark:text-[#4DD0E1]">{PROGRAMME_LABELS[formData.programme]}</strong> has been validated.
+                  Your training enquiry for{' '}
+                  <strong className="text-[#00897B] dark:text-[#4DD0E1]">{PROGRAMME_LABELS[formData.programme]}</strong> has been received by our admissions team.
                 </p>
               </div>
 
-              {/* Honest Development-Ready Status Notice */}
-              <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/40 text-xs text-amber-800 dark:text-amber-300 text-left space-y-1.5 max-w-lg mx-auto">
-                <p className="font-semibold flex items-center gap-1.5">
-                  <Info className="w-4 h-4 shrink-0" />
-                  <span>Notice: Backend API Endpoint Not Connected</span>
-                </p>
-                <p className="leading-relaxed text-[11px] text-amber-700 dark:text-amber-300/90">
-                  This web application is currently in the frontend module stage. A production enquiry endpoint or mailer service is not yet connected in this baseline. This submission was validated locally; personal data was not transmitted or stored on an external server.
-                </p>
-              </div>
-
-              {/* Submitted Data Summary */}
-              <div className="p-4 rounded-2xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs text-slate-600 dark:text-slate-400 text-left space-y-2 max-w-lg mx-auto">
-                <div className="flex justify-between border-b border-slate-200 dark:border-white/5 pb-1">
-                  <span>Contact Email:</span>
-                  <strong className="text-slate-800 dark:text-slate-200">{formData.email}</strong>
-                </div>
-                <div className="flex justify-between border-b border-slate-200 dark:border-white/5 pb-1">
-                  <span>Mobile / WhatsApp:</span>
-                  <strong className="text-slate-800 dark:text-slate-200">{formData.phone}</strong>
-                </div>
-                <div className="flex justify-between border-b border-slate-200 dark:border-white/5 pb-1">
-                  <span>Enquiry Category:</span>
-                  <strong className="text-slate-800 dark:text-slate-200">{AUDIENCE_LABELS[formData.audienceType]}</strong>
-                </div>
-                {formData.organizationName && (
+              {inquiryId && (
+                <div className="p-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs text-slate-600 dark:text-slate-400 space-y-1 max-w-md mx-auto text-left">
                   <div className="flex justify-between">
-                    <span>Organization:</span>
-                    <strong className="text-slate-800 dark:text-slate-200">{formData.organizationName}</strong>
+                    <span>Inquiry Reference:</span>
+                    <strong className="font-mono text-slate-900 dark:text-white">{inquiryId}</strong>
                   </div>
-                )}
-              </div>
+                  <div className="flex justify-between">
+                    <span>Status:</span>
+                    <span className="font-semibold text-[#00897B]">NEW • Recorded</span>
+                  </div>
+                </div>
+              )}
 
-              <div className="pt-3 flex flex-col sm:flex-row items-center justify-center gap-3">
-                <PrimaryButton onClick={closeModal} className="w-full sm:w-auto px-6 py-2.5">
-                  Close Window
-                </PrimaryButton>
+              {/* Action Buttons */}
+              <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl font-semibold text-white bg-[#00897B] hover:bg-[#00796B] transition-colors text-sm"
+                >
+                  Close Dialog
+                </button>
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="text-xs text-[#00897B] dark:text-[#4DD0E1] hover:underline font-semibold p-2"
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors text-sm"
                 >
-                  Test Another Submission
+                  Submit Another Inquiry
                 </button>
               </div>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-              {/* Audience Type Radio Pills */}
+            <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+              {apiError && (
+                <div className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 text-rose-700 dark:text-rose-300 text-xs flex items-start gap-2.5">
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                  <span>{apiError}</span>
+                </div>
+              )}
+
+              {/* Audience Type Selection */}
               <div className="space-y-2">
                 <label className="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 block">
-                  I am inquiring as:
+                  I am enrolling / inquiring as: <span className="text-[#C2185B]">*</span>
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {(Object.keys(AUDIENCE_LABELS) as AudienceType[]).map((type) => {
@@ -247,10 +254,10 @@ export const EnquiryModal: React.FC = () => {
                         key={type}
                         type="button"
                         onClick={() => setFormData({ ...formData, audienceType: type })}
-                        className={`px-3 py-2.5 rounded-xl text-xs font-medium border text-left transition-all ${
+                        className={`p-2.5 rounded-xl text-xs font-medium border text-left transition-all ${
                           isSelected
-                            ? 'bg-[#00897B]/15 border-[#00897B] text-[#00897B] dark:text-[#4DD0E1] font-semibold'
-                            : 'bg-slate-100/80 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-white/20'
+                            ? 'bg-[#00897B]/15 border-[#00897B] text-[#00897B] dark:text-[#4DD0E1] font-semibold ring-1 ring-[#00897B]'
+                            : 'bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:border-slate-300'
                         }`}
                       >
                         {AUDIENCE_LABELS[type].split('(')[0]}
@@ -260,8 +267,9 @@ export const EnquiryModal: React.FC = () => {
                 </div>
               </div>
 
-              {/* Full Name & Organization */}
+              {/* Form Inputs Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Full Name */}
                 <div className="space-y-1.5">
                   <label htmlFor="modal-name" className="text-xs font-medium text-slate-700 dark:text-slate-300 block">
                     Full Name <span className="text-[#C2185B]">*</span>
@@ -272,44 +280,15 @@ export const EnquiryModal: React.FC = () => {
                     type="text"
                     value={formData.fullName}
                     onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                    placeholder="e.g. Priya Patil"
-                    className={`w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-[#070D1E]/80 border text-slate-900 dark:text-white placeholder-slate-400 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00897B] ${
-                      errors.fullName ? 'border-[#C2185B]' : 'border-slate-300/80 dark:border-white/15'
-                    }`}
+                    placeholder="Enter full name"
+                    className={`w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-[#14263C] border ${
+                      errors.fullName ? 'border-rose-500' : 'border-slate-200 dark:border-white/10'
+                    } focus:border-[#00897B] outline-none text-slate-900 dark:text-white transition-all`}
                   />
-                  {errors.fullName && (
-                    <p className="text-[11px] text-[#C2185B] flex items-center gap-1">
-                      <AlertCircle className="w-3 h-3" />
-                      {errors.fullName}
-                    </p>
-                  )}
+                  {errors.fullName && <p className="text-[11px] text-rose-500">{errors.fullName}</p>}
                 </div>
 
-                <div className="space-y-1.5">
-                  <label htmlFor="modal-org" className="text-xs font-medium text-slate-700 dark:text-slate-300 block">
-                    Organization / School {['school', 'college_university', 'institute'].includes(formData.audienceType) && <span className="text-[#C2185B]">*</span>}
-                  </label>
-                  <input
-                    id="modal-org"
-                    type="text"
-                    value={formData.organizationName}
-                    onChange={(e) => setFormData({ ...formData, organizationName: e.target.value })}
-                    placeholder="e.g. Pune Agricultural Institute"
-                    className={`w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-[#070D1E]/80 border text-slate-900 dark:text-white placeholder-slate-400 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00897B] ${
-                      errors.organizationName ? 'border-[#C2185B]' : 'border-slate-300/80 dark:border-white/15'
-                    }`}
-                  />
-                  {errors.organizationName && (
-                    <p className="text-[11px] text-[#C2185B] flex items-center gap-1">
-                      <AlertCircle className="w-3 h-3" />
-                      {errors.organizationName}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {/* Email & Phone */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Email Address */}
                 <div className="space-y-1.5">
                   <label htmlFor="modal-email" className="text-xs font-medium text-slate-700 dark:text-slate-300 block">
                     Email Address <span className="text-[#C2185B]">*</span>
@@ -319,22 +298,20 @@ export const EnquiryModal: React.FC = () => {
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="priya@example.com"
-                    className={`w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-[#070D1E]/80 border text-slate-900 dark:text-white placeholder-slate-400 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00897B] ${
-                      errors.email ? 'border-[#C2185B]' : 'border-slate-300/80 dark:border-white/15'
-                    }`}
+                    placeholder="name@example.com"
+                    className={`w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-[#14263C] border ${
+                      errors.email ? 'border-rose-500' : 'border-slate-200 dark:border-white/10'
+                    } focus:border-[#00897B] outline-none text-slate-900 dark:text-white transition-all`}
                   />
-                  {errors.email && (
-                    <p className="text-[11px] text-[#C2185B] flex items-center gap-1">
-                      <AlertCircle className="w-3 h-3" />
-                      {errors.email}
-                    </p>
-                  )}
+                  {errors.email && <p className="text-[11px] text-rose-500">{errors.email}</p>}
                 </div>
+              </div>
 
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Phone */}
                 <div className="space-y-1.5">
                   <label htmlFor="modal-phone" className="text-xs font-medium text-slate-700 dark:text-slate-300 block">
-                    Mobile / WhatsApp <span className="text-[#C2185B]">*</span>
+                    Phone / WhatsApp Number <span className="text-[#C2185B]">*</span>
                   </label>
                   <input
                     id="modal-phone"
@@ -342,33 +319,46 @@ export const EnquiryModal: React.FC = () => {
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="+91 98765 43210"
-                    className={`w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-[#070D1E]/80 border text-slate-900 dark:text-white placeholder-slate-400 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00897B] ${
-                      errors.phone ? 'border-[#C2185B]' : 'border-slate-300/80 dark:border-white/15'
-                    }`}
+                    className={`w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-[#14263C] border ${
+                      errors.phone ? 'border-rose-500' : 'border-slate-200 dark:border-white/10'
+                    } focus:border-[#00897B] outline-none text-slate-900 dark:text-white transition-all`}
                   />
-                  {errors.phone && (
-                    <p className="text-[11px] text-[#C2185B] flex items-center gap-1">
-                      <AlertCircle className="w-3 h-3" />
-                      {errors.phone}
-                    </p>
-                  )}
+                  {errors.phone && <p className="text-[11px] text-rose-500">{errors.phone}</p>}
+                </div>
+
+                {/* Organisation */}
+                <div className="space-y-1.5">
+                  <label htmlFor="modal-org" className="text-xs font-medium text-slate-700 dark:text-slate-300 block">
+                    Institution / Organization Name
+                  </label>
+                  <input
+                    id="modal-org"
+                    type="text"
+                    value={formData.organizationName}
+                    onChange={(e) => setFormData({ ...formData, organizationName: e.target.value })}
+                    placeholder="School, College, or Farm Name"
+                    className={`w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-[#14263C] border ${
+                      errors.organizationName ? 'border-rose-500' : 'border-slate-200 dark:border-white/10'
+                    } focus:border-[#00897B] outline-none text-slate-900 dark:text-white transition-all`}
+                  />
+                  {errors.organizationName && <p className="text-[11px] text-rose-500">{errors.organizationName}</p>}
                 </div>
               </div>
 
-              {/* Programme Selection */}
+              {/* Programme Select */}
               <div className="space-y-1.5">
                 <label htmlFor="modal-programme" className="text-xs font-medium text-slate-700 dark:text-slate-300 block">
-                  Programme of Interest
+                  Select Training Discipline <span className="text-[#C2185B]">*</span>
                 </label>
                 <select
                   id="modal-programme"
                   value={formData.programme}
                   onChange={(e) => setFormData({ ...formData, programme: e.target.value as ProgrammeInterest })}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-[#070D1E]/80 border border-slate-300/80 dark:border-white/15 text-slate-900 dark:text-white text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00897B]"
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-[#14263C] border border-slate-200 dark:border-white/10 focus:border-[#00897B] outline-none text-slate-900 dark:text-white transition-all"
                 >
-                  {(Object.keys(PROGRAMME_LABELS) as ProgrammeInterest[]).map((key) => (
-                    <option key={key} value={key} className="bg-white dark:bg-[#070D1E] text-slate-900 dark:text-white">
-                      {PROGRAMME_LABELS[key]}
+                  {(Object.keys(PROGRAMME_LABELS) as ProgrammeInterest[]).map((p) => (
+                    <option key={p} value={p}>
+                      {PROGRAMME_LABELS[p]}
                     </option>
                   ))}
                 </select>
@@ -377,42 +367,27 @@ export const EnquiryModal: React.FC = () => {
               {/* Message */}
               <div className="space-y-1.5">
                 <label htmlFor="modal-message" className="text-xs font-medium text-slate-700 dark:text-slate-300 block">
-                  Message or Training Requirements
+                  Specific Requirements or Questions (Optional)
                 </label>
                 <textarea
                   id="modal-message"
                   rows={3}
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  placeholder="Tell us about your learning goals, cohort size, or preferred scheduling..."
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-[#070D1E]/80 border border-slate-300/80 dark:border-white/15 text-slate-900 dark:text-white placeholder-slate-400 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00897B]"
+                  placeholder="Expected batch timing, number of students, or any prior experience..."
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-[#14263C] border border-slate-200 dark:border-white/10 focus:border-[#00897B] outline-none text-slate-900 dark:text-white transition-all resize-none"
                 />
               </div>
 
-              {/* Development Status Disclaimer */}
-              <div className="flex items-start gap-2 p-3 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-[11px] text-slate-500 dark:text-slate-400">
-                <Info className="w-3.5 h-3.5 text-[#00897B] shrink-0 mt-0.5" />
-                <span>
-                  Notice: Inquiries are captured in development preview mode. A dedicated backend API endpoint will be connected in the backend milestone.
-                </span>
-              </div>
-
-              {/* Modal Actions */}
-              <div className="pt-2 flex flex-col sm:flex-row items-center justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
-                >
-                  Cancel
-                </button>
+              {/* Submit Button */}
+              <div className="pt-2">
                 <PrimaryButton
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full sm:w-auto justify-center"
+                  className="w-full justify-center py-3.5"
                   icon={<Send className="w-4 h-4" />}
                 >
-                  {isSubmitting ? 'Validating Enquiry...' : 'Submit Training Enquiry'}
+                  {isSubmitting ? 'Submitting Enquiry...' : 'Submit Training Enquiry'}
                 </PrimaryButton>
               </div>
             </form>

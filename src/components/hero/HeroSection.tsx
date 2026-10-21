@@ -2,23 +2,54 @@
 
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { ArrowDown, ArrowRight, ShieldCheck, Sparkles, BookOpen } from 'lucide-react';
 import { PrimaryButton } from '../ui/PrimaryButton';
 import { SecondaryButton } from '../ui/SecondaryButton';
 import { useEnquiryModal } from '../../context/ModalContext';
+import { useTheme } from '../../context/ThemeContext';
 import heroSectionImage from '../../../assets/images/hero-section-image.jpg';
+import nareeFoundationLogo from '../../../assets/images/naree_foundation_logo.jpg';
 
 export const HeroSection: React.FC = () => {
   const { openModal } = useEnquiryModal();
+  const { theme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isDark = mounted ? theme === 'dark' : true;
 
   return (
     <section
       id="hero"
-      className="relative min-h-screen pt-24 pb-12 sm:pt-28 lg:pt-28 lg:pb-16 flex items-center justify-center overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-100 dark:from-[#070D1E] dark:via-[#09142E] dark:to-[#070D1E] transition-colors duration-300"
+      className="relative min-h-screen pt-24 pb-12 sm:pt-28 lg:pt-32 lg:pb-16 flex items-center justify-center overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-100 dark:from-[#070D1E] dark:via-[#09142E] dark:to-[#070D1E] transition-colors duration-300"
     >
       {/* Background Ambience & Lighting */}
       <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-[#00897B]/10 dark:bg-[#0F2C59]/30 rounded-full blur-[140px] pointer-events-none -z-10" />
       <div className="absolute bottom-10 right-1/4 w-[450px] h-[450px] bg-[#FB8C00]/10 dark:bg-[#00897B]/15 rounded-full blur-[140px] pointer-events-none -z-10" />
+
+      {/* Elegant Brand Logo Watermark — NF Venture Studio / Naree Foundation */}
+      <div
+        className="hero-watermark absolute right-0 sm:right-[2%] lg:right-[4%] xl:right-[6%] top-1/2 -translate-y-1/2 w-[300px] h-[300px] sm:w-[380px] sm:h-[380px] lg:w-[460px] lg:h-[460px] pointer-events-none select-none z-0"
+        aria-hidden="true"
+      >
+        <Image
+          src={nareeFoundationLogo}
+          alt=""
+          width={460}
+          height={460}
+          priority
+          className="hero-watermark-img w-full h-full object-contain transition-all duration-300"
+          style={{
+            mixBlendMode: isDark ? 'screen' : 'multiply',
+            filter: isDark ? 'invert(1) sepia(0.8) saturate(2.5) hue-rotate(5deg)' : 'none',
+            opacity: isDark ? 0.08 : 0.06,
+          }}
+        />
+      </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
@@ -35,10 +66,10 @@ export const HeroSection: React.FC = () => {
               </span>
             </div>
 
-            {/* Main Editorial Headline */}
+            {/* Main Editorial Headline with green-led gradient */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight font-display leading-[1.1] sm:leading-[1.12]">
               Cultivating Modern <br className="hidden sm:inline" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00897B] via-[#00ACC1] to-[#2E7D32]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1B5E20] via-[#00897B] to-[#00ACC1]">
                 Agricultural Technology
               </span>{' '}
               & Enterprise Skills
@@ -52,7 +83,7 @@ export const HeroSection: React.FC = () => {
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-2">
               <PrimaryButton
-                href="#programmes"
+                href="/programmes"
                 className="w-full sm:w-auto"
                 icon={<ArrowRight className="w-4 h-4" />}
               >
@@ -86,7 +117,7 @@ export const HeroSection: React.FC = () => {
 
           {/* Right Column: Hero Photograph with 5px Deep-Green Border */}
           <div className="lg:col-span-6 w-full flex items-center lg:items-start justify-center lg:justify-end lg:pt-1">
-            <div className="hero-image-frame">
+            <div className="hero-image-frame relative z-10 border-[5px] border-[#1B5E20] rounded-3xl overflow-hidden shadow-2xl">
               <Image
                 src={heroSectionImage}
                 alt="AgrooNext agricultural technology trainee monitoring greenhouse hydroponic crops with a tablet"
@@ -102,16 +133,16 @@ export const HeroSection: React.FC = () => {
 
         {/* Scroll Indicator */}
         <div className="pt-12 sm:pt-16 flex flex-col items-center justify-center">
-          <a
-            href="#about"
+          <Link
+            href="/about"
             className="group flex flex-col items-center gap-2 text-xs uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00897B] rounded-lg p-2"
-            aria-label="Scroll to Foundation Overview"
+            aria-label="Navigate to About AgrooNext"
           >
             <span className="text-[11px] font-medium">Discover Training Mission</span>
             <div className="w-8 h-8 rounded-full border border-slate-300 dark:border-white/15 group-hover:border-[#00897B] flex items-center justify-center transition-colors">
               <ArrowDown className="w-4 h-4 text-[#00897B] group-hover:translate-y-0.5 transition-transform" />
             </div>
-          </a>
+          </Link>
         </div>
       </div>
     </section>

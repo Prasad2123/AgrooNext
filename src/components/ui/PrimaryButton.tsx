@@ -27,10 +27,10 @@ export const PrimaryButton: React.FC<ButtonProps> = ({
   const baseClasses = `
     inline-flex items-center justify-center gap-2.5 px-6 py-3.5 
     rounded-xl font-semibold text-sm text-white tracking-wide
-    bg-gradient-to-r from-[#00897B] to-[#00695C]
-    hover:from-[#009688] hover:to-[#00897B]
+    bg-gradient-to-r from-[#1B5E20] via-[#00897B] to-[#00796B]
+    hover:from-[#2E7D32] hover:via-[#009688] hover:to-[#00897B]
     active:scale-[0.98] transition-all duration-200
-    shadow-lg shadow-[#00897B]/25 hover:shadow-[#00897B]/40
+    shadow-lg shadow-[#1B5E20]/20 hover:shadow-[#00897B]/35
     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00897B] focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[#070D1E]
     min-h-[44px] cursor-pointer select-none disabled:opacity-50 disabled:cursor-not-allowed
     ${className}

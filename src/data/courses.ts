@@ -1,0 +1,295 @@
+export interface CourseOffering {
+  courseCode: string;
+  title: string;
+  slug: string;
+  offeringType: 'CRASH_COURSE' | 'TOPIC_CERTIFICATE' | 'COMPLETE_PACKAGE' | 'INSTITUTIONAL_WORKSHOP';
+  deliveryLevel: 'LEVEL_1_FOUNDATION' | 'LEVEL_2_SKILL_CERTIFICATE' | 'LEVEL_3_ENTERPRISE_PACKAGE' | 'INSTITUTIONAL_WORKSHOP';
+  standardDuration: string;
+  badge: string;
+  summary: string;
+  prerequisites: string;
+  targetGroup: string;
+  pricingModel: 'PER_STUDENT' | 'PER_INSTITUTION_SESSION';
+  baseFeeInr: number;
+  formattedFee: string;
+  eligibilityNotes: string;
+  topicsCovered: string[];
+  capstoneRequirement: string;
+  associatedProgrammeSlugs: string[];
+}
+
+export const COURSES_DATA: CourseOffering[] = [
+  {
+    courseCode: 'FMT-CRASH-SCH',
+    title: 'Agro-Tech Crash Course (School Students)',
+    slug: 'agro-tech-crash-course-school',
+    offeringType: 'CRASH_COURSE',
+    deliveryLevel: 'LEVEL_1_FOUNDATION',
+    standardDuration: '1 Day (6 Hours)',
+    badge: 'School Cohorts (Ages 12–17)',
+    summary:
+      'One-day multi-discipline experiential awareness workshop introducing school students to modern protected agriculture, soilless hydroponics, aeroponics, mushroom cultivation, and aquaculture.',
+    prerequisites: 'Enrolled in Grades 8 to 12 or equivalent secondary education.',
+    targetGroup: 'School Students',
+    pricingModel: 'PER_STUDENT',
+    baseFeeInr: 250.0,
+    formattedFee: '₹250 per student',
+    eligibilityNotes: 'Requires valid school ID card or principal bonafide certificate.',
+    topicsCovered: [
+      'Introduction to Modern Soilless Farming & Protected Agriculture',
+      'Hands-on Hydroponic Tabletop Assembly & Seed Sowing',
+      'Aeroponic Misting Demonstrations & Root Chamber Observation',
+      'Mushroom Bag Inoculation & Mycology Fundamentals',
+      'Living Biofloc & Fish Tank Chemistry Demonstration',
+    ],
+    capstoneRequirement: 'Individual participation in live seed sowing and water pH testing exercise.',
+    associatedProgrammeSlugs: ['hydroponics', 'aeroponics', 'mushroom-farming', 'aquaculture'],
+  },
+  {
+    courseCode: 'FMT-CRASH-COL',
+    title: 'Agro-Tech Crash Course (College & University)',
+    slug: 'agro-tech-crash-course-college',
+    offeringType: 'CRASH_COURSE',
+    deliveryLevel: 'LEVEL_1_FOUNDATION',
+    standardDuration: '1 Day (7 Hours)',
+    badge: 'Undergraduate & Vocational',
+    summary:
+      'Intensive multi-discipline technology foundation course covering scientific operations, water chemistry, electrical conductivity dosing, automation, and introductory unit economics for undergraduate and vocational learners.',
+    prerequisites: 'Undergraduate, postgraduate, or vocational diploma student.',
+    targetGroup: 'College Students',
+    pricingModel: 'PER_STUDENT',
+    baseFeeInr: 500.0,
+    formattedFee: '₹500 per student',
+    eligibilityNotes: 'Requires valid college/university student identification.',
+    topicsCovered: [
+      'Chemical & Biological Principles of Controlled Environment Agriculture',
+      'Nutrient Formulation, EC/pH Calibration & Ion Antagonism',
+      'High-Pressure Aeroponics & Misting Cycle Dynamics',
+      'Commercial Mushroom Substrate Pasteurization & Aseptic Inoculation',
+      'Microbial Biofloc Dynamics, C:N Ratios & Recirculating Aquaculture',
+      'Introductory Farm Economics & Career Pathways in Modern Agro-Tech',
+    ],
+    capstoneRequirement: 'Conduct complete chemical water quality analysis and calibrate nutrient solution.',
+    associatedProgrammeSlugs: ['hydroponics', 'aeroponics', 'mushroom-farming', 'aquaculture', 'women-empowerment'],
+  },
+  {
+    courseCode: 'FMT-CERT-HYD',
+    title: '5-Day Certificate Course in Hydroponics',
+    slug: '5-day-certificate-hydroponics',
+    offeringType: 'TOPIC_CERTIFICATE',
+    deliveryLevel: 'LEVEL_2_SKILL_CERTIFICATE',
+    standardDuration: '5 Days (30 Hours)',
+    badge: 'Skill Certification',
+    summary:
+      'Deep-dive practical training in commercial soilless cultivation. Master NFT channels, deep water culture, vertical towers, computerized nutrient dosing (EC/pH), crop pest management, and greenhouse plumbing.',
+    prerequisites: 'Open to all individuals, farmers, students, and agri-entrepreneurs.',
+    targetGroup: 'Individual Learners / SHGs',
+    pricingModel: 'PER_STUDENT',
+    baseFeeInr: 5000.0,
+    formattedFee: '₹5,000 per participant',
+    eligibilityNotes: 'Includes laboratory consumables, PPE, and comprehensive study dossier.',
+    topicsCovered: [
+      'Commercial System Topologies: NFT, DWC, Dutch Buckets & Vertical Towers',
+      'Plumbing Architecture, Sump Calculations & Bypass Valving',
+      'Water Chemistry, Mineral Formulation & Nutrient Deficiencies',
+      'Nursery Media Preparation, Germination & Transplant Scheduling',
+      'Pest & Pathogen Control without Toxic Chemical Pesticides',
+      'Crop Harvesting, Cold Storage Protocols & Unit Cost Economics',
+    ],
+    capstoneRequirement:
+      'Assemble an operational desktop hydroponic unit and calculate nutrient dosing for a complete 30-day crop cycle.',
+    associatedProgrammeSlugs: ['hydroponics'],
+  },
+  {
+    courseCode: 'FMT-CERT-AER',
+    title: '5-Day Certificate Course in Aeroponics',
+    slug: '5-day-certificate-aeroponics',
+    offeringType: 'TOPIC_CERTIFICATE',
+    deliveryLevel: 'LEVEL_2_SKILL_CERTIFICATE',
+    standardDuration: '5 Days (30 Hours)',
+    badge: 'Skill Certification',
+    summary:
+      'Hands-on technical training in high-pressure mist systems, root-zone oxygenation, nozzle sizing, accumulator pressure balancing, automated cyclic timing, and clean vertical farming.',
+    prerequisites: 'Open to all individuals, farmers, students, and agri-entrepreneurs.',
+    targetGroup: 'Individual Learners / SHGs',
+    pricingModel: 'PER_STUDENT',
+    baseFeeInr: 5000.0,
+    formattedFee: '₹5,000 per participant',
+    eligibilityNotes: 'Includes laboratory consumables, PPE, and comprehensive study dossier.',
+    topicsCovered: [
+      'High-Pressure Aeroponic Physics: Droplet Size & Root Oxygenation',
+      'Diaphragm Pump Selection, Accumulator Tanks & Solenoid Control',
+      'Nozzle Sizing, Clog Prevention & Multi-Stage Filtration',
+      'Interval Timer Configuration & Cyclic Spray Regimes',
+      'Root Health Maintenance, Pythium Prevention & Disinfection Protocols',
+      'Vertical Aeroponic Column Construction & Economic Analysis',
+    ],
+    capstoneRequirement:
+      'Design and calibrate a pressurized mist chamber with automated cyclic timer controls and multi-stage filtration.',
+    associatedProgrammeSlugs: ['aeroponics'],
+  },
+  {
+    courseCode: 'FMT-CERT-MSH',
+    title: '5-Day Certificate Course in Mushroom Farming',
+    slug: '5-day-certificate-mushroom-farming',
+    offeringType: 'TOPIC_CERTIFICATE',
+    deliveryLevel: 'LEVEL_2_SKILL_CERTIFICATE',
+    standardDuration: '5 Days (30 Hours)',
+    badge: 'Skill Certification',
+    summary:
+      'Practical commercial mycology training covering substrate preparation, steam pasteurization, sterile spawn inoculation, fruiting chamber humidity/temperature controls, and post-harvest packaging.',
+    prerequisites: 'Open to all individuals, farmers, SHG members, and entrepreneurs.',
+    targetGroup: 'Individual Learners / SHGs',
+    pricingModel: 'PER_STUDENT',
+    baseFeeInr: 5000.0,
+    formattedFee: '₹5,000 per participant',
+    eligibilityNotes: 'Includes laboratory consumables, PPE, spawn samples, and study dossier.',
+    topicsCovered: [
+      'Edible Species: Oyster (Pleurotus), Milky (Calocybe) & Button Mushrooms',
+      'Substrate Sourcing, Chopping, Hydration & Pasteurization Standards',
+      'Aseptic Inoculation & Grain Spawn Handling in Clean-Air Environments',
+      'Dark Incubation Room Management & Mycelial Colonization Monitoring',
+      'Fruiting Climate Management: Humidity, Fresh Air Exchange (CO2) & Light',
+      'Harvesting Techniques, Dehydration, Packaging & Market Sales',
+    ],
+    capstoneRequirement:
+      'Prepare 5 sterile substrate bags, inoculate with mother spawn, document the incubation cycle, and establish a fruiting climate log.',
+    associatedProgrammeSlugs: ['mushroom-farming'],
+  },
+  {
+    courseCode: 'FMT-CERT-AQU',
+    title: '5-Day Certificate Course in Aquaculture & Biofloc',
+    slug: '5-day-certificate-aquaculture',
+    offeringType: 'TOPIC_CERTIFICATE',
+    deliveryLevel: 'LEVEL_2_SKILL_CERTIFICATE',
+    standardDuration: '5 Days (30 Hours)',
+    badge: 'Skill Certification',
+    summary:
+      'Intensive immersion into recirculating aquaculture (RAS) and Biofloc microbial technology. Master scientific water chemistry, carbon-to-nitrogen balancing, aeration design, and fish nutrition.',
+    prerequisites: 'Open to all individuals, farmers, and entrepreneurs.',
+    targetGroup: 'Individual Learners / SHGs',
+    pricingModel: 'PER_STUDENT',
+    baseFeeInr: 5000.0,
+    formattedFee: '₹5,000 per participant',
+    eligibilityNotes: 'Includes water testing reagents, laboratory consumables, PPE, and study dossier.',
+    topicsCovered: [
+      'Inland Aquaculture Principles: Pond vs. Tank vs. Biofloc Systems',
+      'Water Chemistry Diagnostics: Dissolved Oxygen, Ammonia, Nitrite, pH & Alkalinity',
+      'Microbial Floc Formation, C:N Ratios & Organic Carbon Correction',
+      'Aeration Mechanics, Blower Sizing & Emergency Power Backup',
+      'Fish Feed Formulation, Feed Conversion Ratios (FCR) & Feeding Charts',
+      'Disease Prevention, Farm Biosecurity Protocols & Harvest Logistics',
+    ],
+    capstoneRequirement:
+      'Conduct comprehensive chemical water tests, calculate feeding charts, and draft a tank biofloc layout with aeration redundancy.',
+    associatedProgrammeSlugs: ['aquaculture'],
+  },
+  {
+    courseCode: 'FMT-CERT-WAG',
+    title: '5-Day Certificate in Women Agri-Entrepreneurship',
+    slug: '5-day-certificate-women-agri-entrepreneurship',
+    offeringType: 'TOPIC_CERTIFICATE',
+    deliveryLevel: 'LEVEL_2_SKILL_CERTIFICATE',
+    standardDuration: '5 Days (30 Hours)',
+    badge: 'Skill Certification',
+    summary:
+      'Practical enterprise planning for women leaders, rural youth, and Self-Help Groups (SHGs). Master agro-product value addition, unit costing, pricing, packaging, digital bookkeeping, and formal credit awareness.',
+    prerequisites: 'Open to women entrepreneurs, SHG members, and rural innovators.',
+    targetGroup: 'Women Entrepreneurs / SHGs',
+    pricingModel: 'PER_STUDENT',
+    baseFeeInr: 5000.0,
+    formattedFee: '₹5,000 per participant',
+    eligibilityNotes: 'Subsidized community training baseline supported by social outreach.',
+    topicsCovered: [
+      'Value-Added Agro-Products: Solar Dehydration, Powders, Fresh Packs & Nursery',
+      'Unit Costing, Overhead Allocation, Gross Margins & Cash-Flow Budgets',
+      'Self-Help Group (SHG) Collective Governance & Work Distribution',
+      'Digital Record Keeping, Mobile Invoicing & Financial Literacy',
+      'Compliant Packaging, Labeling Standards & Local Retail Linkages',
+      'Institutional Credit Awareness, MUDRA Schemes & 12-Month Launch Action Plan',
+    ],
+    capstoneRequirement:
+      'Develop a verified 12-month micro-enterprise business canvas with operating expense budgets, channel partners, and cash-flow estimates.',
+    associatedProgrammeSlugs: ['women-empowerment'],
+  },
+  {
+    courseCode: 'FMT-PKG-ALL',
+    title: 'Complete Agro-Tech & Training Package (All 5 Topics)',
+    slug: 'complete-agro-tech-package',
+    offeringType: 'COMPLETE_PACKAGE',
+    deliveryLevel: 'LEVEL_3_ENTERPRISE_PACKAGE',
+    standardDuration: '3 Weeks (15 Days / 90 Hours)',
+    badge: 'Master Diploma Immersion',
+    summary:
+      'Comprehensive 3-week immersion spanning all five modern agricultural disciplines: Hydroponics, Aeroponics, Mushroom Farming, Aquaculture, and Enterprise Planning. Includes hands-on lab rotations, continuous mentoring, and enterprise incubation support.',
+    prerequisites: 'Aspiring agricultural entrepreneurs, commercial farm managers, and graduates.',
+    targetGroup: 'Aspiring Commercial Growers & Entrepreneurs',
+    pricingModel: 'PER_STUDENT',
+    baseFeeInr: 22000.0,
+    formattedFee: '₹22,000 per participant',
+    eligibilityNotes: 'Includes ₹3,000 package savings compared to five separate individual certificates.',
+    topicsCovered: [
+      'Week 1: Soilless Cultivation — Hydroponic & Aeroponic Systems Engineering',
+      'Week 2: Biological & Aquatic Systems — Mushroom Cultivation & Biofloc Aquaculture',
+      'Week 3: Integrated Farm Architecture, Commercial Unit Economics & Enterprise Incubation',
+      'Multi-Discipline Laboratory Rotations with Physical Hardware Assembly',
+      'Full Water Chemistry, Nutrient Chemistry & Disease Diagnostics Mastery',
+      'Complete 12-Month Commercial Farm Business Plan & Investor Pitch Presentation',
+    ],
+    capstoneRequirement:
+      'Complete physical assembly of multi-discipline lab units and present an investor-ready 12-month commercial enterprise business plan.',
+    associatedProgrammeSlugs: ['hydroponics', 'aeroponics', 'mushroom-farming', 'aquaculture', 'women-empowerment'],
+  },
+  {
+    courseCode: 'FMT-INST-SCH',
+    title: 'One-Day Institutional Agro-Tech Training (Schools)',
+    slug: 'institutional-training-schools',
+    offeringType: 'INSTITUTIONAL_WORKSHOP',
+    deliveryLevel: 'INSTITUTIONAL_WORKSHOP',
+    standardDuration: '1 Day (Full Campus Session)',
+    badge: 'Institutional Turnkey Delivery',
+    summary:
+      'Turnkey full-day hands-on agricultural technology workshop delivered at your school campus by certified AgrooNext trainers with live demonstration units and scientific apparatus.',
+    prerequisites: 'Authorized school administrative booking for student cohorts (Grades 8–12).',
+    targetGroup: 'Schools & Educational Institutions',
+    pricingModel: 'PER_INSTITUTION_SESSION',
+    baseFeeInr: 15000.0,
+    formattedFee: '₹15,000 per institutional session',
+    eligibilityNotes: 'Flat rate per 1-day institutional session for agreed student cohort size. Venue provided by school.',
+    topicsCovered: [
+      'On-Campus Demonstration Hardware: Portable Hydroponic & Aeroponic Units',
+      'STEM Alignment: Photosynthesis, pH/EC Chemistry, and Resource Conservation',
+      'Interactive Student Assembly & Hands-On Sowing Experiments',
+      'Mushroom Biology & Sustainable Agricultural Waste Recycling',
+      'Institutional Farm Lab Guidance for School Science Departments',
+    ],
+    capstoneRequirement: 'Guided student group assembly and institutional science exhibition demonstration.',
+    associatedProgrammeSlugs: ['hydroponics', 'aeroponics', 'mushroom-farming', 'aquaculture'],
+  },
+  {
+    courseCode: 'FMT-INST-COL',
+    title: 'One-Day Institutional Agro-Tech Training (Colleges & Universities)',
+    slug: 'institutional-training-colleges',
+    offeringType: 'INSTITUTIONAL_WORKSHOP',
+    deliveryLevel: 'INSTITUTIONAL_WORKSHOP',
+    standardDuration: '1 Day (Full Campus Session)',
+    badge: 'Institutional Turnkey Delivery',
+    summary:
+      'Turnkey full-day experiential agro-technology workshop delivered at your college or university campus with practical water chemistry analysis, commercial hardware demonstrations, and entrepreneurship counseling.',
+    prerequisites: 'Authorized college/university department booking.',
+    targetGroup: 'Colleges & Universities',
+    pricingModel: 'PER_INSTITUTION_SESSION',
+    baseFeeInr: 25000.0,
+    formattedFee: '₹25,000 per institutional session',
+    eligibilityNotes: 'Flat rate per 1-day institutional session for agreed student cohort size. Venue provided by college.',
+    topicsCovered: [
+      'Controlled Environment Agriculture Engineering & Automation',
+      'Rigorous Analytical Water Testing (Spectrophotometry & Chemical Titration)',
+      'High-Density Biofloc Microbial Ecosystems & Aquaculture Operations',
+      'Mushroom Laboratory Inoculation Standards & Commercial Scale-Up',
+      'Agritech Career Pathways, Industry Research & Enterprise Funding Opportunities',
+    ],
+    capstoneRequirement: 'Departmental lab demonstration and technical student evaluation.',
+    associatedProgrammeSlugs: ['hydroponics', 'aeroponics', 'mushroom-farming', 'aquaculture', 'women-empowerment'],
+  },
+];

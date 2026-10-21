@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { SiteHeader } from './SiteHeader';
 import { SiteFooter } from './SiteFooter';
@@ -12,16 +12,19 @@ import { EnquiryModal } from './EnquiryModal';
  *
  * Wraps the public-facing SiteHeader, SiteFooter, ScrollProgress, and
  * EnquiryModal. These components are ONLY rendered for public marketing
- * routes (i.e. routes that are not under /admin, /portal, /login, or
- * /register).
+ * routes (i.e. routes that are not under /admin, /portal, /login, /register, or /access-denied).
  *
- * This keeps the root layout.tsx from injecting public chrome into
- * authenticated / app-shell pages that manage their own navigation.
+ * Keeps authenticated shells completely isolated.
  */
-const PRIVATE_ROUTE_PREFIXES = ['/admin', '/portal', '/login', '/register'];
+const PRIVATE_ROUTE_PREFIXES = ['/admin', '/portal', '/login', '/register', '/access-denied'];
 
 export function ConditionalPublicLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+
+  // Reset scroll to top on page change
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [pathname]);
 
   const isPublicRoute = !PRIVATE_ROUTE_PREFIXES.some((prefix) =>
     pathname.startsWith(prefix)
@@ -32,11 +35,13 @@ export function ConditionalPublicLayout({ children }: { children: React.ReactNod
     return <>{children}</>;
   }
 
+  const isHomepage = pathname === '/';
+
   return (
     <>
       <ScrollProgress />
       <SiteHeader />
-      <main id="main-content" className="relative min-h-screen">
+      <main id="main-content" className={`relative min-h-screen ${isHomepage ? '' : 'pt-20 sm:pt-24'}`}>
         {children}
       </main>
       <SiteFooter />
